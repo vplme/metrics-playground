@@ -12,6 +12,7 @@ management:
   otlp:
     metrics:
       export:
+        enabled: true
         url: ${OTEL_EXPORTER_OTLP_METRICS_ENDPOINT:http://localhost:9090/api/v1/otlp/v1/metrics}
         step: 10s
         resource-attributes:
