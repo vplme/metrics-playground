@@ -1,0 +1,218 @@
+{
+  "annotations": {
+    "list": []
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "links": [],
+  "panels": [
+    {
+      "title": "HTTP Server — Request Rate (movie-client)",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "targets": [
+        {
+          "expr": "rate(http_server_request_duration_seconds_count{service_name=\"movie-client\"}[1m])",
+          "legendFormat": "{{http_request_method}} {{url_path}} — {{http_response_status_code}}",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "reqps",
+          "custom": { "drawStyle": "line", "fillOpacity": 10, "pointSize": 5 }
+        }
+      }
+    },
+    {
+      "title": "HTTP Server — Request Rate (movie-service)",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
+      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "targets": [
+        {
+          "expr": "rate(http_server_request_duration_seconds_count{service_name=\"movie-service\"}[1m])",
+          "legendFormat": "{{http_request_method}} {{url_path}} — {{http_response_status_code}}",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "reqps",
+          "custom": { "drawStyle": "line", "fillOpacity": 10, "pointSize": 5 }
+        }
+      }
+    },
+    {
+      "title": "HTTP Server — Latency p50 / p95 / p99 (movie-client)",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 8 },
+      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.50, rate(http_server_request_duration_seconds_bucket{service_name=\"movie-client\"}[1m]))",
+          "legendFormat": "p50",
+          "refId": "A"
+        },
+        {
+          "expr": "histogram_quantile(0.95, rate(http_server_request_duration_seconds_bucket{service_name=\"movie-client\"}[1m]))",
+          "legendFormat": "p95",
+          "refId": "B"
+        },
+        {
+          "expr": "histogram_quantile(0.99, rate(http_server_request_duration_seconds_bucket{service_name=\"movie-client\"}[1m]))",
+          "legendFormat": "p99",
+          "refId": "C"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "custom": { "drawStyle": "line", "fillOpacity": 10, "pointSize": 5 }
+        }
+      }
+    },
+    {
+      "title": "HTTP Server — Latency p50 / p95 / p99 (movie-service)",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 8 },
+      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.50, rate(http_server_request_duration_seconds_bucket{service_name=\"movie-service\"}[1m]))",
+          "legendFormat": "p50",
+          "refId": "A"
+        },
+        {
+          "expr": "histogram_quantile(0.95, rate(http_server_request_duration_seconds_bucket{service_name=\"movie-service\"}[1m]))",
+          "legendFormat": "p95",
+          "refId": "B"
+        },
+        {
+          "expr": "histogram_quantile(0.99, rate(http_server_request_duration_seconds_bucket{service_name=\"movie-service\"}[1m]))",
+          "legendFormat": "p99",
+          "refId": "C"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "custom": { "drawStyle": "line", "fillOpacity": 10, "pointSize": 5 }
+        }
+      }
+    },
+    {
+      "title": "HTTP Server — Error Rate (5xx)",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 16 },
+      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "targets": [
+        {
+          "expr": "rate(http_server_request_duration_seconds_count{service_name=\"movie-client\", http_response_status_code=~\"5..\"}[1m])",
+          "legendFormat": "movie-client 5xx",
+          "refId": "A"
+        },
+        {
+          "expr": "rate(http_server_request_duration_seconds_count{service_name=\"movie-service\", http_response_status_code=~\"5..\"}[1m])",
+          "legendFormat": "movie-service 5xx",
+          "refId": "B"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "reqps",
+          "custom": { "drawStyle": "line", "fillOpacity": 20, "pointSize": 5 },
+          "color": { "mode": "palette-classic" }
+        }
+      }
+    },
+    {
+      "title": "Custom — Movies Fetched & Errors (movie-client)",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 16 },
+      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "targets": [
+        {
+          "expr": "rate(movies_fetched_total{service_name=\"movie-client\"}[1m])",
+          "legendFormat": "fetched/s",
+          "refId": "A"
+        },
+        {
+          "expr": "rate(movies_fetch_errors_total{service_name=\"movie-client\"}[1m])",
+          "legendFormat": "errors/s",
+          "refId": "B"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ops",
+          "custom": { "drawStyle": "line", "fillOpacity": 10, "pointSize": 5 }
+        }
+      }
+    },
+    {
+      "title": "Custom — Movie Fetch Duration (movie-client)",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 24 },
+      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.50, rate(movies_fetch_duration_seconds_bucket{service_name=\"movie-client\"}[1m]))",
+          "legendFormat": "p50",
+          "refId": "A"
+        },
+        {
+          "expr": "histogram_quantile(0.95, rate(movies_fetch_duration_seconds_bucket{service_name=\"movie-client\"}[1m]))",
+          "legendFormat": "p95",
+          "refId": "B"
+        },
+        {
+          "expr": "histogram_quantile(0.99, rate(movies_fetch_duration_seconds_bucket{service_name=\"movie-client\"}[1m]))",
+          "legendFormat": "p99",
+          "refId": "C"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "custom": { "drawStyle": "line", "fillOpacity": 10, "pointSize": 5 }
+        }
+      }
+    },
+    {
+      "title": "JVM Memory Usage",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 24 },
+      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "targets": [
+        {
+          "expr": "jvm_memory_used_bytes{service_name=\"movie-client\", area=\"heap\"} / 1024 / 1024",
+          "legendFormat": "movie-client heap (MB)",
+          "refId": "A"
+        },
+        {
+          "expr": "jvm_memory_used_bytes{service_name=\"movie-service\", area=\"heap\"} / 1024 / 1024",
+          "legendFormat": "movie-service heap (MB)",
+          "refId": "B"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "decmbytes",
+          "custom": { "drawStyle": "line", "fillOpacity": 10, "pointSize": 5 }
+        }
+      }
+    }
+  ],
+  "schemaVersion": 39,
+  "tags": ["metrics-playground", "spring-boot", "opentelemetry"],
+  "templating": { "list": [] },
+  "time": { "from": "now-15m", "to": "now" },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "Metrics Playground",
+  "uid": "metrics-playground",
+  "version": 1
+}

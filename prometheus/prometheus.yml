@@ -1,0 +1,25 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+# Enable out-of-order ingestion for OTLP batched metrics
+storage:
+  tsdb:
+    out_of_order_time_window: 30m
+
+# OTLP resource attribute promotion — these become Prometheus labels
+# on all metrics (not just target_info)
+otlp:
+  promote_resource_attributes:
+    - service.instance.id
+    - service.name
+    - service.namespace
+    - service.version
+
+# No scrape targets needed — metrics arrive via OTLP push.
+# Prometheus self-monitoring is still useful:
+scrape_configs:
+  - job_name: prometheus
+    static_configs:
+      - targets:
+          - localhost:9090

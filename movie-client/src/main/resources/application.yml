@@ -1,0 +1,23 @@
+spring:
+  application:
+    name: movie-client
+
+server:
+  port: 8080
+
+movie-service:
+  base-url: ${MOVIE_SERVICE_URL:http://localhost:8081}
+
+management:
+  otlp:
+    metrics:
+      export:
+        url: ${OTEL_EXPORTER_OTLP_METRICS_ENDPOINT:http://localhost:9090/api/v1/otlp/v1/metrics}
+        step: 10s
+        resource-attributes:
+          service.name: ${spring.application.name}
+          service.instance.id: ${random.uuid}
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
