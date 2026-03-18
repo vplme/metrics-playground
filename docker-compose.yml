@@ -58,6 +58,16 @@ services:
     networks:
       - metrics-net
 
+  traffic-gen:
+    image: alpine/curl:latest
+    volumes:
+      - ./traffic-gen/generate-traffic.sh:/generate-traffic.sh:ro
+    entrypoint: ["/bin/sh", "/generate-traffic.sh"]
+    depends_on:
+      - movie-client
+    networks:
+      - metrics-net
+
 volumes:
   prometheus-data:
   grafana-data:
