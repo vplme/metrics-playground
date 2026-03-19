@@ -38,6 +38,31 @@ class MovieService {
             ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "Movie with id $id not found")
     }
 
+    fun findBestMatch(title: String?, year: Int?, genre: String?): Movie? {
+        simulateLatency()
+        maybeFail()
+
+        return movies
+            .map { movie -> movie to scoreMatch(movie, title, year, genre) }
+            .filter { (_, score) -> score > 0 }
+            .maxByOrNull { (_, score) -> score }
+            ?.first
+    }
+
+    private fun scoreMatch(movie: Movie, title: String?, year: Int?, genre: String?): Int {
+        var score = 0
+        if (!title.isNullOrBlank() && movie.title.contains(title, ignoreCase = true)) {
+            score++
+        }
+        if (year != null && movie.year == year) {
+            score++
+        }
+        if (!genre.isNullOrBlank() && movie.genre.equals(genre, ignoreCase = true)) {
+            score++
+        }
+        return score
+    }
+
     /**
      * Simulates realistic network/processing latency between 50ms and 500ms.
      */

@@ -30,4 +30,22 @@ class MovieApiClient(
             .retrieve()
             .body(Movie::class.java)
     }
+
+    fun findBestMatch(title: String?, year: Int?, genre: String?): Movie? {
+        log.debug("Finding best match: title={}, year={}, genre={}", title, year, genre)
+        return movieServiceRestClient
+            .get()
+            .uri { uriBuilder ->
+                uriBuilder
+                    .path("/api/movies/best-match")
+                    .apply {
+                        title?.let { queryParam("title", it) }
+                        year?.let { queryParam("year", it) }
+                        genre?.let { queryParam("genre", it) }
+                    }
+                    .build()
+            }
+            .retrieve()
+            .body(Movie::class.java)
+    }
 }

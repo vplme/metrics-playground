@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.server.ResponseStatusException
 
@@ -55,4 +56,39 @@ class MovieController(
                 throw ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE, "Movie service unavailable", e)
             }
         }!!
+
+    @GetMapping("/best-match")
+    fun findBestMatch(
+        @RequestParam(required = false) title: String?,
+        @RequestParam(required = false) year: Int?,
+        @RequestParam(required = false) genre: String?,
+    ): Movie {
+        val movie =
+            try {
+                movieApiClient.findBestMatch(title, year, genre)
+            } catch (e: Exception) {
+                log.error("Failed to find best match: title={}, year={}, genre={}", title, year, genre, e)
+                metrics.recordBestMatch(
+                    titleProvided = !title.isNullOrBlank(),
+                    yearProvided = year != null,
+                    genreProvided = !genre.isNullOrBlank(),
+                    movie = null,
+                )
+                throw ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE, "Movie service unavailable", e)
+            }
+
+        metrics.recordBestMatch(
+            titleProvided = !title.isNullOrBlank(),
+            yearProvided = year != null,
+            genreProvided = !genre.isNullOrBlank(),
+            movie = movie,
+        )
+
+        if (movie != null) {
+            log.info("Found best match: {}", movie.title)
+            return movie
+        }
+
+        throw ResponseStatusException(HttpStatus.NOT_FOUND, "No matching movie found")
+    }
 }
